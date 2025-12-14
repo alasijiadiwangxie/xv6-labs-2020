@@ -1,0 +1,39 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        
+        {
+            "name": "xv6-gdb-debug", // 调试配置名称
+            "type": "cppdbg", // 兼容 GDB 的调试类型
+            "request": "launch",
+            "program": "${workspaceFolder}/kernel/kernel", // xv6 内核镜像路径
+            "args": [],
+            "stopAtEntry": true, // 不强制停在入口（可设为 true 停在 _start）
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb", // 使用 GDB 调试
+            "miDebuggerPath": "gdb-multiarch", // 多架构 GDB 路径（Ubuntu 下默认）
+            "miDebuggerServerAddress": "localhost:26000", // 连接 QEMU 的 GDB 端口
+            "preLaunchTask": "xv6-qemu-gdb", // 调试前先执行 tasks 中的 xv6-qemu-gdb 任务
+            "setupCommands": [
+                // 配置 GDB 适配 RISC-V 架构
+                {
+                    "text": "set arch riscv:rv64",
+                    "description": "设置 GDB 架构为 RISC-V 64 位"
+                },
+                {
+                    "text": "file ${workspaceFolder}/kernel",
+                    "description": "加载内核镜像符号表"
+                },
+                {
+                    "text": "target remote localhost:1234",
+                    "description": "连接 QEMU 的 GDB 端口"
+                }
+            ],
+            "logging": {
+                "engineLogging": true
+            }
+        }
+    ]
+}
