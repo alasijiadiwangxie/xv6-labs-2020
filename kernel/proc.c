@@ -286,9 +286,14 @@ growproc(int n)
 
   sz = p->sz;
   if(n > 0){
-    if((sz = uvmalloc(p->pagetable, sz, sz + n)) == 0) {
+    if (PGROUNDUP(sz + n) >= PLIC){
       return -1;
     }
+    if ((sz = uvmalloc(p->pagetable, sz, sz + n)) == 0)
+    {
+      return -1;
+    }
+    u2kvmcopy(p->pagetable, p->kernelpt, sz - n, sz);
   } else if(n < 0){
     sz = uvmdealloc(p->pagetable, sz, sz + n);
   }
@@ -317,7 +322,7 @@ fork(void)
     return -1;
   }
   np->sz = p->sz;
-
+  u2kvmcopy(np->pagetable, np->kernelpt, 0, np->sz);
   np->parent = p;
 
   // copy saved user registers.
