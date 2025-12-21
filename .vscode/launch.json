@@ -1,0 +1,31 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "XV6 RISC-V Debug",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/kernel/kernel", // "${workspaceFolder}/可执行文件的路径" 
+            "miDebuggerPath": "/usr/bin/gdb-multiarch",
+            "miDebuggerServerAddress": "localhost:26000",
+            "args": [], //需要的参数
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}", // 调试工作目录（xv6根目录）
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                // 调试前的初始化命令
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "logging": {
+                "engineLogging": true,
+                "programOutput": true,
+            }
+        }
+    ]
+}
