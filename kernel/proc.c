@@ -322,7 +322,7 @@ fork(void)
     return -1;
   }
   np->sz = p->sz;
-  u2kvmcopy(np->pagetable, np->kernelpt, 0, np->sz);
+  
   np->parent = p;
 
   // copy saved user registers.
@@ -342,6 +342,8 @@ fork(void)
   pid = np->pid;
 
   np->state = RUNNABLE;
+
+  u2kvmcopy(np->pagetable, np->kernelpt, 0, np->sz);
 
   release(&np->lock);
 
