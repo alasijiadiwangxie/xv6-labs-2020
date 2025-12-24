@@ -41,10 +41,11 @@ freerange(void *pa_start, void *pa_end)
 {
   char *p;
   p = (char*)PGROUNDUP((uint64)pa_start);
-  for(; p + PGSIZE <= (char*)pa_end; p += PGSIZE)
+  for(; p + PGSIZE <= (char*)pa_end; p += PGSIZE) {
     // 在kfree中将会对cnt[]减1，这里要先设为1，否则就会减成负数
     ref.cnt[(uint64)p / PGSIZE] = 1;
-  kfree(p);
+    kfree(p);
+  }
 }
 
 // Free the page of physical memory pointed at by v,
