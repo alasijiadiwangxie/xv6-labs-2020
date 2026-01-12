@@ -31,15 +31,15 @@ procinit(void)
   for(p = proc; p < &proc[NPROC]; p++) {
       initlock(&p->lock, "proc");
 
-      // Allocate a page for the process's kernel stack.
-      // Map it high in memory, followed by an invalid
-      // guard page.
-      char *pa = kalloc();
-      if(pa == 0)
-        panic("kalloc");
-      uint64 va = KSTACK((int) (p - proc));
-      kvmmap(va, (uint64)pa, PGSIZE, PTE_R | PTE_W);
-      p->kstack = va;
+  //     // Allocate a page for the process's kernel stack.
+  //     // Map it high in memory, followed by an invalid
+  //     // guard page.
+  //     char *pa = kalloc();
+  //     if(pa == 0)
+  //       panic("kalloc");
+  //     uint64 va = KSTACK((int) (p - proc));
+  //     kvmmap(va, (uint64)pa, PGSIZE, PTE_R | PTE_W);
+  //     p->kstack = va;
   }
   kvminithart();
 }
@@ -181,9 +181,12 @@ freeproc(struct proc *p)
   if(p->pagetable)
     proc_freepagetable(p->pagetable, p->sz);
   // free the kernel stack in the RAM
-  uvmunmap(p->kernelpt, p->kstack, 1, 1);
-  p->kstack = 0;
-  proc_freekernelpt(p->kernelpt);
+  if(p->kstack) {
+    uvmunmap(p->kernelpt, p->kstack, 1, 1);
+    p->kstack = 0;
+  }
+  if(p->kernelpt)
+    proc_freekernelpt(p->kernelpt);
   p->pagetable = 0;
   p->sz = 0;
   p->pid = 0;
