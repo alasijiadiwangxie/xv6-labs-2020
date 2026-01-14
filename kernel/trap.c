@@ -71,7 +71,8 @@ usertrap(void)
   else if (r_scause() == 13 || r_scause() == 15)
   {
     uint64 fault_va = r_stval();
-    if (fault_va >= p->sz || cowpage(p->pagetable, fault_va) != 0 || cowalloc(p->pagetable, PGROUNDDOWN(fault_va)) == 0)
+    if (fault_va >= p->sz || cowpage(p->pagetable, fault_va) != 0 || cowalloc(p->pagetable, PGROUNDDOWN(fault_va)) == 0) 
+    // PGROUNDDOWN(fault_va) XV6 的内存管理、页表映射都是以「页 (4KB)」为最小单位，不可能对单个字节的虚拟地址做映射处理
       p->killed = 1;
   }
   else
