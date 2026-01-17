@@ -475,7 +475,7 @@ itrunc(struct inode *ip)
         a1 = (uint*)bp1->data;
         for (j = 0; j < NADDR_PER_BLOCK; j++) {
           if(a1[j])
-            bfree(ip->dev, a[j]);
+            bfree(ip->dev, a1[j]);
         }
         brelse(bp1);
         bfree(ip->dev, a[i]);
