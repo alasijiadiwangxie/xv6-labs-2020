@@ -326,15 +326,7 @@ sys_open(void)
     end_op();
     return -1;
   }
-
-  if((f = filealloc()) == 0 || (fd = fdalloc(f)) < 0){
-    if(f)
-      fileclose(f);
-    iunlockput(ip);
-    end_op();
-    return -1;
-  }
-
+  
   // 处理符号链接
   if (ip->type == T_SYMLINK && !(omode & O_NOFOLLOW))
   {
@@ -344,7 +336,7 @@ sys_open(void)
     for (int i = 0; i < MAX_SYMLINK_DEPTH; ++i)
     {
       // 读出符号链接指向的路径
-      if (readi(ip, 0, (uint64)path, 0, MAXPATH) != MAXPATH)
+      if (readi(ip, 0, (uint64)path, 0, ip->size) != ip->size)
       {
         iunlockput(ip);
         end_op();
@@ -368,6 +360,14 @@ sys_open(void)
       end_op();
       return -1;
     }
+  }
+
+  if((f = filealloc()) == 0 || (fd = fdalloc(f)) < 0){
+    if(f)
+      fileclose(f);
+    iunlockput(ip);
+    end_op();
+    return -1;
   }
 
   if(ip->type == T_DEVICE){
@@ -545,7 +545,7 @@ sys_symlink(void)
     return -1;
   }
   // 向inode数据块中写入target路径
-  if (writei(ip_path, 0, (uint64)target, 0, MAXPATH) < 0)
+  if (writei(ip_path, 0, (uint64)target, 0, strlen(target)) != strlen(target))
   {
     iunlockput(ip_path);
     end_op();
