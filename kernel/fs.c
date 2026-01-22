@@ -37,7 +37,7 @@ readsb(int dev, struct superblock *sb)
   brelse(bp);
 }
 
-// Init fs
+// Init fs   
 void
 fsinit(int dev) {
   readsb(dev, &sb);
