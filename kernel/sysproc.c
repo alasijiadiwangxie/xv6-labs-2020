@@ -50,10 +50,11 @@ sys_sbrk(void)
   addr = p->sz;
   uint64 sz = p->sz;
 
-  if (n > 0) {
+  if(n > 0) {
     // lazy allocation
     p->sz += n;
-  } else if (sz + n > 0) {
+  }else if(sz + n > 0)
+  { // 减少堆大小，但减少后堆仍为正数
     sz = uvmdealloc(p->pagetable, sz, sz + n);
     p->sz = sz;
   }
