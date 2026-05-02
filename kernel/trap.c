@@ -43,12 +43,12 @@ usertrap(void)
 
   // send interrupts and exceptions to kerneltrap(),
   // since we're now in the kernel.
-  w_stvec((uint64)kernelvec);
+  w_stvec((uint64)kernelvec); // w_stvec() 写入处理陷阱的地址，即跳到kernelvec();
 
   struct proc *p = myproc();
   
   // save user program counter.
-  p->trapframe->epc = r_sepc();
+  p->trapframe->epc = r_sepc(); // 发生陷阱就会将程序计数器pc保存至trapframe中
   
   if(r_scause() == 8){
     // system call
@@ -71,6 +71,7 @@ usertrap(void)
   else if (r_scause() == 13 || r_scause() == 15)
   {
     uint64 fault_va = r_stval();
+    // 三个检查：1.访问的虚拟地址必须在用户进程的堆范围内；2.访问的页面必须是COW页面；3.分配一个新的物理页面并将其映射到该虚拟地址上
     if (fault_va >= p->sz || cowpage(p->pagetable, fault_va) != 0 || cowalloc(p->pagetable, PGROUNDDOWN(fault_va)) == 0) 
     // PGROUNDDOWN(fault_va) XV6 的内存管理、页表映射都是以「页 (4KB)」为最小单位，不可能对单个字节的虚拟地址做映射处理
       p->killed = 1;
