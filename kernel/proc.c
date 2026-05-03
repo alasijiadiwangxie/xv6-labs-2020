@@ -107,6 +107,7 @@ allocproc(void)
 found:
   p->pid = allocpid();
 
+  // 初始化告警字段
   if ((p->alarm_trapframe = (struct trapframe*)kalloc()) == 0) {
     freeproc(p);
     release(&p->lock);
@@ -152,7 +153,7 @@ freeproc(struct proc *p)
   if(p->pagetable)
     proc_freepagetable(p->pagetable, p->sz);
   if (p->alarm_trapframe)
-    kfree((void *)p->alarm_trapframe);
+    kfree((void*)p->alarm_trapframe);
   p->pagetable = 0;
   p->sz = 0;
   p->pid = 0;
