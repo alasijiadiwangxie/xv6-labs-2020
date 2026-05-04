@@ -404,8 +404,8 @@ bmap(struct inode *ip, uint bn)
 
   //二级间接块情况
   if(bn < NDINDIRECT){
-    int level2_idx = bn / NADDR_PER_BLOCK;
-    int level1_idx = bn % NADDR_PER_BLOCK;
+    int level2_idx = bn / NADDR_PER_BLOCK;// 要查找的块号位于二级间接块中的位置
+    int level1_idx = bn % NADDR_PER_BLOCK;// 要查找的块号位于一级间接块中的位置
     //读出二级间接块
     if((addr = ip->addrs[NDIRECT + 1]) == 0)
       ip->addrs[NDIRECT + 1] = addr = balloc(ip->dev);
