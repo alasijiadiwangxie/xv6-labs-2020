@@ -533,7 +533,7 @@ sys_mmap(void)
       filedup(vfile);
 
       p->sz += length;
-      return p->vma[i].addr;
+      return p->vma[i].addr; // 返回映射的起始地址
     }
   }
 
@@ -555,6 +555,9 @@ sys_munmap(void)
     {
       // 根据提示，munmap的地址范围只能是
       // 1. 起始位置
+      // 原 VMA: [0x4000, 0x7000) 长度 0x3000
+      // 取消:   [0x4000, 0x5000) 长度 0x1000
+      // 结果:   [0x5000, 0x7000) 长度 0x2000
       if (p->vma[i].addr == addr)
       {
         p->vma[i].addr += length;
@@ -563,6 +566,9 @@ sys_munmap(void)
       }
 
       // 2.结束位置
+      // 原 VMA: [0x4000, 0x7000) 长度 0x3000
+      // 取消:   [0x6000, 0x7000) 长度 0x1000
+      // 结果:   [0x4000, 0x6000) 长度 0x2000
       if (addr + length == p->vma[i].addr + p->vma[i].len)
       {
         p->vma[i].len -= length;
