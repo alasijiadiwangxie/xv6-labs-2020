@@ -93,9 +93,9 @@ kalloc(void)
       acquire(&kmem[antid].lock);
       r = kmem[antid].freelist;
       if (r){
-        kmem[antid].freelist = r->next;
+        kmem[antid].freelist = r->next; // 只拿一页内存
         release(&kmem[antid].lock);
-        break;
+        break; // 跳出 for 循环
       }
       release(&kmem[antid].lock);
     }

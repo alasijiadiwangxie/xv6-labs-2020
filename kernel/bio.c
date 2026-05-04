@@ -100,8 +100,7 @@ bget(uint dev, uint blockno)
   struct buf* tmp;
   
   // Recycle the least recently used (LRU) unused buffer.
-  // 从当前散列桶查找
-
+  // 优先从当前散列桶查找
   for (int i = bid, cycle = 0; cycle != NBUCKET; i = (i + 1) % NBUCKET) {
     ++cycle;
     //如果遍历到当前散列桶，则不重新获取锁
@@ -114,6 +113,9 @@ bget(uint dev, uint blockno)
 
     for (tmp = bcache.buckets[i].head.next; tmp != &bcache.buckets[i].head; tmp = tmp->next) {
       //使用时间戳进行LRU算法，而不是根据结点在链表中的位置
+      // 1.tmp->refcnt未被引用
+      // 2.b == 0 检查是否还没有找到任何候选缓冲区
+      // 3. tmp->timestamp < b->timestamp 检查是否是最近未使用的缓冲区
       if(tmp->refcnt == 0 && (b == 0 || tmp->timestamp < b->timestamp))
         b = tmp;
     }
